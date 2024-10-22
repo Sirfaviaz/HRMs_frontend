@@ -1,3 +1,4 @@
+//slices/userSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
 // Try to load user data and token from localStorage, otherwise default to initial state

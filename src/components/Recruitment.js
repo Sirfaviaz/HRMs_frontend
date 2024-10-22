@@ -21,10 +21,10 @@ const Recruitment = ({ isAdmin, isHR, handleSelection }) => {
           <ListItemText primary="Candidates" />
         </ListItem>
         <ListItem button onClick={() => handleSelection('referrals')}>
-          <ListItemText primary="My Referrals" />
+          <ListItemText primary="Stages" />
         </ListItem>
-        <ListItem button onClick={() => handleSelection('career-site')}>
-          <ListItemText primary="Career Site" />
+        <ListItem button onClick={() => handleSelection('status')}>
+          <ListItemText primary="Status" />
         </ListItem>
       </List>
     </Box>

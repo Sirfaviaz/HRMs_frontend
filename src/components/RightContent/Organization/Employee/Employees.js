@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, CircularProgress, Pagination } from '@mui/material';
+import { Grid, CircularProgress, Pagination, Box } from '@mui/material';
 import EmployeesNavbar from './Employees/EmployeesNavbar'; // Import the updated EmployeesNavbar
 import EmployeeCard from './Employees/EmployeeCard'; // Import EmployeeCard component
 import CreateEmployeeForm from './Employees/EmployeesNavbar/CreateEmployeeForm'; // Import CreateEmployeeForm
@@ -26,6 +26,7 @@ const Employees = () => {
     try {
       setLoading(true);
       const response = await api.get('/employees/employees');
+      console.log("employee_cards", response.data);
       setEmployees(response.data);
       setFilteredEmployees(response.data); // Initially, all employees are shown
       setCurrentPage(1); // Reset to first page after fetching new data
@@ -86,7 +87,7 @@ const Employees = () => {
   const totalPages = Math.ceil(filteredEmployees.length / employeesPerPage);
 
   return (
-    <div>
+    <Box sx={{ maxWidth: '80%', margin: '0 auto', padding: 2 }}> {/* Limit width and center content */}
       {/* Pass necessary props to EmployeesNavbar */}
       <EmployeesNavbar
         onViewChange={handleViewChange}
@@ -128,7 +129,7 @@ const Employees = () => {
         onEmployeeCreated={handleEmployeeCreated}
         employee={selectedEmployee} // Pass employee data to form when editing
       />
-    </div>
+    </Box>
   );
 };
 

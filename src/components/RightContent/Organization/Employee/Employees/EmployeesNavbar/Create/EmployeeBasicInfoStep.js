@@ -17,6 +17,7 @@ const EmployeeBasicInfoStep = ({
   positions,
   handleProfilePictureChange,
 }) => {
+  console.log("basic_formdata", formData, "hc",handleChange, departments,positions)
   return (
     <Grid container spacing={2}>
       {/* Profile Picture */}
@@ -41,7 +42,7 @@ const EmployeeBasicInfoStep = ({
         <TextField
           fullWidth
           label="First Name"
-          value={formData.firstName}
+          value={formData.firstName || ''}  
           onChange={(e) => handleChange('firstName', e.target.value)}
           required
         />
@@ -52,7 +53,7 @@ const EmployeeBasicInfoStep = ({
         <TextField
           fullWidth
           label="Last Name"
-          value={formData.lastName}
+          value={formData.lastName || ''}  
           onChange={(e) => handleChange('lastName', e.target.value)}
           required
         />
@@ -63,7 +64,7 @@ const EmployeeBasicInfoStep = ({
         <TextField
           fullWidth
           label="Email"
-          value={formData.email}
+          value={formData.email || ''}  
           onChange={(e) => handleChange('email', e.target.value)}
           required
         />
@@ -74,7 +75,7 @@ const EmployeeBasicInfoStep = ({
         <FormControl fullWidth margin="normal">
           <InputLabel>Department</InputLabel>
           <Select
-            value={formData.department || ''}
+            value={formData.department || ''} 
             onChange={(e) => handleChange('department', e.target.value)}
             required
           >
@@ -92,7 +93,7 @@ const EmployeeBasicInfoStep = ({
         <FormControl fullWidth margin="normal">
           <InputLabel>Position</InputLabel>
           <Select
-            value={formData.position || ''}
+            value={formData.position || ''}  
             onChange={(e) => handleChange('position', e.target.value)}
             required
           >
@@ -111,7 +112,7 @@ const EmployeeBasicInfoStep = ({
           fullWidth
           label="Date Joined"
           type="date"
-          value={formData.dateJoined}
+          value={formData.dateJoined || ''}  
           onChange={(e) => handleChange('dateJoined', e.target.value)}
           required
           InputLabelProps={{

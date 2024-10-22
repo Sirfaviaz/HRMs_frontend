@@ -19,6 +19,7 @@ import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
 import LogoutIcon from '@mui/icons-material/Logout'; // Import the logout icon
 import CloseIcon from '@mui/icons-material/Close'; // Import the Close icon
 import ClockInOutButtons from './RightContent/Navbar/ClockInOutButtons'; // Import ClockInOutButtons component
+import logo from './logo.png';
 
 const Navbar = ({ selectedOption, toggleSidebar, handleLogout }) => {
   const [anchorEl, setAnchorEl] = useState(null); // State to control avatar dropdown
@@ -56,17 +57,31 @@ const Navbar = ({ selectedOption, toggleSidebar, handleLogout }) => {
       <Toolbar sx={{ justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
         {/* Left section with clickable logo to toggle sidebar */}
         <Box display="flex" alignItems="center">
-          <Box
-            onClick={toggleSidebar} // Toggle sidebar visibility when clicked
-            sx={{
-              width: 40,
-              height: 40,
-              bgcolor: '#e0e0e0',
-              borderRadius: '50%',
-              marginRight: 2, // Smaller margin between logo and selectedOption
-              cursor: 'pointer', // Show pointer to indicate clickability
+        <Box
+          onClick={toggleSidebar} // Toggle sidebar visibility when clicked
+          sx={{
+            width: 80,
+            height: 80,
+            bgcolor: '#e0e0e0',
+            borderRadius: '50%',
+            marginRight: 2, // Smaller margin between logo and selectedOption
+            cursor: 'pointer', // Show pointer to indicate clickability
+            display: 'flex', // Center the logo inside the box
+            alignItems: 'center',
+            justifyContent: 'center',
+            overflow: 'hidden', // Make sure the logo doesn't overflow the rounded box
+          }}
+        >
+          <img
+            src={logo} // Replace this with your logo path
+            alt="Logo"
+            style={{
+              width: '100%', // Ensures the logo fits inside the box
+              height: '100%',
+              objectFit: 'cover', // Maintain aspect ratio and cover the entire box
             }}
           />
+        </Box>
           {/* Selected Option, slightly closer to the logo */}
           <Typography
             variant="h6"
@@ -198,8 +213,8 @@ const Navbar = ({ selectedOption, toggleSidebar, handleLogout }) => {
                 position: 'absolute',
                 top: 0,
                 right: 14,
-                width: 10,
-                height: 10,
+                width: '100%',
+                height: '100%',
                 bgcolor: 'background.paper',
                 transform: 'translateY(-50%) rotate(45deg)',
                 zIndex: 0,

@@ -52,6 +52,7 @@ const EmployeeCard = ({ employee = {}, onEdit }) => {
         boxShadow: '0 0 5px rgba(0, 0, 0, 0.1)', // Slight shadow for the card
         borderRadius: '12px', // Rounded corners
         maxWidth: 400, // Optional width adjustment
+        position: 'relative', // For absolute positioning of alerts
       }}
     >
       {/* Avatar Section */}
@@ -69,14 +70,20 @@ const EmployeeCard = ({ employee = {}, onEdit }) => {
           {employee?.user?.email || 'No Email Available'} {/* Fallback if email is undefined */}
         </Typography>
         <Typography variant="body2" sx={{ fontSize: '0.875rem', color: 'gray' }}>
-          {employee?.position?.title || 'No Title'} - {employee?.department?.name || 'No Department'} {/* Fixed rendering of position */}
+          {employee?.position_title || 'No Title'} - {employee?.department_name || 'No Department'} {/* Fixed rendering of position */}
         </Typography>
 
-        {/* Status */}
+        {/* Status - Display online/offline */}
         <Box sx={{ display: 'flex', alignItems: 'center', marginTop: 1 }}>
-          <CircleIcon sx={{ fontSize: '10px', color: 'green', marginRight: 1 }} />
+          <CircleIcon
+            sx={{
+              fontSize: '10px',
+              color: employee?.status ? 'green' : 'gray', // Green for online, gray for offline
+              marginRight: 1,
+            }}
+          />
           <Typography variant="body2">
-            {employee?.status || 'No Status'}
+            {employee?.status ? 'Online' : 'Offline'} {/* Display "Online" if status is true, otherwise "Offline" */}
           </Typography>
         </Box>
       </CardContent>

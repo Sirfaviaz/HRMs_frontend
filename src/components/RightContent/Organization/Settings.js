@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import './Settings.css';
 import Sidebar from './Settings/Sidebar';
-import Content from './Settings/Content';
+import ImportExport from './Settings/Content';
+import UserPermissions from './Settings/UserPermissions';
 
 const Settings = () => {
     const [activeSection, setActiveSection] = useState('General'); // State to track the active section
@@ -12,11 +13,11 @@ const Settings = () => {
             case 'General':
                 return <div>General Settings Content</div>;
             case 'Import/Export':
-                return <Content />; // Existing Content component for Import/Export
+                return <ImportExport />; // Existing Content component for Import/Export
             case 'Base':
-                return <div>Base Settings Content</div>;
+                return <UserPermissions/>;
             case 'Help Desk':
-                return <div>Help Desk Content</div>;
+                return <div>Help Desk</div>;
             default:
                 return <div>Select a section from the sidebar.</div>;
         }

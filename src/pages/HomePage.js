@@ -35,14 +35,22 @@ function HomePage() {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100vh' }}>
-      {/* Pass selectedOption, toggleSidebar, and handleLogout to Navbar */}
-      <Navbar selectedOption={selectedOption} toggleSidebar={toggleSidebar} handleLogout={handleLogout} />
-      <Box sx={{ display: 'flex', flexGrow: 1, mt: 8 }}>
+      {/* Navbar taking 8% of the page height */}
+      <Box sx={{ height: '10%' }}>
+        <Navbar selectedOption={selectedOption} toggleSidebar={toggleSidebar} handleLogout={handleLogout} />
+      </Box>
+
+      {/* Sidebar and RightContent taking the remaining 92% of the height */}
+      <Box sx={{ display: 'flex', height: '90%', }}>
         {/* Conditionally render Sidebar based on visibility */}
         {sidebarVisible && (
-          <Sidebar isAdmin={isAdmin} isHR={isHR} handleSelection={handleSelection} />
+          <Box sx={{ width: '15%', height: '100%', }}>
+            <Sidebar isAdmin={isAdmin} isHR={isHR} handleSelection={handleSelection} />
+          </Box>
         )}
-        <RightContent selectedOption={selectedOption} username={username} handleLogout={handleLogout} />
+        <Box sx={{ width: sidebarVisible ? '85%' : '100%', height: '100%' }}>
+          <RightContent selectedOption={selectedOption} username={username} handleLogout={handleLogout} />
+        </Box>
       </Box>
     </Box>
   );

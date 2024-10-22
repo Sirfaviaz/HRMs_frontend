@@ -8,7 +8,7 @@ const DropdownSelector = ({ label, value, options, handleChange }) => {
       <Select value={value} onChange={handleChange} label={label}>
         {options.map((option) => (
           <MenuItem key={option.id} value={option.id}>
-            {option.title || (option.user && `${option.user.first_name} ${option.user.last_name}`) || 'Unknown'} {/* Adjust for employee names safely */}
+            {option.title|| option.name || (option.user && `${option.user.first_name} ${option.user.last_name}`) || 'Unknown'} {/* Adjust for employee names safely */}
           </MenuItem>
         ))}
       </Select>

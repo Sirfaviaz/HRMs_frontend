@@ -5,14 +5,15 @@ import Mails from './Menu/Messaging';
 import Meetings from './Menu/Meetings';
 import JobPostings from './Recruitment/JobPostings';
 import Candidates from './Recruitment/Candidates';
-import Referrals from './Recruitment/Referrals';
+import StageSetList from './Recruitment/StageSetList';
 import Employee from './Organization/Employee';
-import Structure from './Organization/Structure';
+import AttendanceCalendar from './Organization/AttendanceCalendar';
 import Report from './Organization/Report';
 import Employees from './Organization/Employee/Employees';
 import Profile from './Organization/Employee/Profile';
 import Settings from './Organization/Settings'
 import DocumentRequest from './Organization/Employee/DocumentRequest';
+import Status from './Recruitment/Status'
 
 const RightContent = ({ selectedOption }) => {
   let content;
@@ -33,8 +34,11 @@ const RightContent = ({ selectedOption }) => {
       content = <Candidates />;
       break;
     case 'referrals':
-      content = <Referrals />;
+      content = <StageSetList />;
       break;
+    case 'status':
+        content = <Status />; 
+        break;
     case 'employee':
       content = <Employee />; // New case for "Employees"
       break;
@@ -49,7 +53,7 @@ const RightContent = ({ selectedOption }) => {
       content = <DocumentRequest />; // New case for "Document Request"
       break;
     case 'structure':
-      content = <Structure />;
+      content = <AttendanceCalendar />;
       break;
     case 'report':
       content = <Report />;
@@ -62,7 +66,7 @@ const RightContent = ({ selectedOption }) => {
   }
 
   return (
-    <Box sx={{ flexGrow: 1, p: 3, height: '100vh', overflowY: 'auto' }}>
+    <Box sx={{ flexGrow: 1, p: 3, height: '100%', overflowY: 'auto', width:'100%' }}>
       {content}
     </Box>
   );

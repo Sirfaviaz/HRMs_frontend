@@ -25,6 +25,7 @@ const Candidates = () => {
   const fetchJobPostings = async () => {
     try {
       const response = await api.get('/jobs/job-postings/');
+      console.log("candi_form",response.data)
       setJobPostings(response.data);
     } catch (error) {
       console.error('Error fetching job postings:', error);
@@ -47,9 +48,10 @@ const Candidates = () => {
   };
 
   const handleSubmit = async (formData) => {
+    console.log("candi_form",formData)
     try {
       if (selectedCandidate) {
-        await api.put(`/jobs/applications/${selectedCandidate.id}/`, formData);
+        await api.patch(`/jobs/applications/${selectedCandidate.id}/`, formData);
       } else {
         await api.post('/jobs/applications/', formData);
       }
@@ -84,7 +86,7 @@ const Candidates = () => {
             <TableRow key={candidate.id}>
               <TableCell>{candidate.first_name} {candidate.last_name}</TableCell>
               <TableCell>{candidate.email}</TableCell>
-              <TableCell>{candidate.job_posting?.title || 'N/A'}</TableCell>
+              <TableCell>{candidate.post_title || 'N/A'}</TableCell>
               <TableCell>{candidate.status}</TableCell>
               <TableCell>
                 {candidate.resume ? (

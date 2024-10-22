@@ -8,9 +8,9 @@ const Sidebar = ({ isAdmin, isHR, handleSelection }) => {
   return (
     <Box
       sx={{
-        width: 250,
+        width: '100%',
         bgcolor: '#f8f9fa',
-        height: '100vh',
+        height: '100%',
         padding: 2,
         overflowY: 'auto',
         '&::-webkit-scrollbar': {
@@ -38,7 +38,7 @@ const Sidebar = ({ isAdmin, isHR, handleSelection }) => {
         },
       }}
     >
-      <Box sx={{ marginBottom: 3 }}>
+      <Box sx={{ marginBottom: 1 }}>
         <Typography variant="h5">HRM</Typography>
       </Box>
       {/* Pass handleSelection to Menu and Recruitment components */}

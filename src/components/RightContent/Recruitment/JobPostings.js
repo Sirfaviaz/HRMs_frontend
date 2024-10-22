@@ -15,6 +15,7 @@ const JobPostings = () => {
   const fetchJobPostings = async () => {
     try {
       const response = await api.get('/jobs/job-postings/');
+      console.log("res",response.data)
       setJobPostings(response.data);
       setLoading(false);
     } catch (error) {
@@ -95,7 +96,7 @@ const JobPostings = () => {
           {jobPostings.map((job) => (
             <TableRow key={job.id}>
               <TableCell>{job.title}</TableCell>
-              <TableCell>{job.department?.name || 'N/A'}</TableCell>
+              <TableCell>{job.department_name || 'N/A'}</TableCell>
               <TableCell>{job.location}</TableCell>
               <TableCell>{job.employment_type}</TableCell>
               <TableCell>

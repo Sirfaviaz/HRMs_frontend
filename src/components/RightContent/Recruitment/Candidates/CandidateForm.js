@@ -1,36 +1,64 @@
-// src/components/RightContent/Recruitment/Candidates/CandidateForm.js
-import React, { useState } from 'react';
-import { TextField, Button, Box, MenuItem, Select, FormControl, InputLabel, Typography } from '@mui/material';
+import React, { useState, useEffect } from 'react';
+import { TextField, Button, Box, MenuItem, Select, FormControl, InputLabel, Typography, Link } from '@mui/material';
 import { Upload } from '@mui/icons-material';
 
 const CandidateForm = ({ initialValues = {}, onSubmit, onClose, jobPostings }) => {
+  console.log("init_val", initialValues);
+  
+  // Set initial form data
   const [formData, setFormData] = useState({
-    job_posting: initialValues?.job_posting?.id || '', // Assuming job_posting is an object
+    job_posting: initialValues?.job_posting || '', // Assuming job_posting is an ID
     first_name: initialValues?.first_name || '',
     last_name: initialValues?.last_name || '',
     email: initialValues?.email || '',
-    resume: null,  // File input will be handled differently
+    resume: null,
     cover_letter: initialValues?.cover_letter || '',
     status: initialValues?.status || 'Applied',
   });
+
+  // Update formData when initialValues change (e.g., when switching to edit mode)
+  useEffect(() => {
+    setFormData({
+      job_posting: initialValues?.job_posting || '', // Set job_posting as ID, not an object
+      first_name: initialValues?.first_name || '',
+      last_name: initialValues?.last_name || '',
+      email: initialValues?.email || '',
+      resume: null,
+      cover_letter: initialValues?.cover_letter || '',
+      status: initialValues?.status || 'Applied',
+    });
+  }, [initialValues]);
 
   const handleChange = (field, value) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleFileChange = (event) => {
-    setFormData((prev) => ({ ...prev, resume: event.target.files[0] }));
+    const file = event.target.files[0];
+    if (file) {
+      setFormData((prev) => ({ ...prev, resume: file }));
+    }
   };
 
   const handleFormSubmit = (event) => {
     event.preventDefault();
-    
+
     const submissionData = new FormData();
-    for (let key in formData) {
-      submissionData.append(key, formData[key]);
+
+    // Append non-file fields to FormData
+    submissionData.append('job_posting', formData.job_posting);
+    submissionData.append('first_name', formData.first_name);
+    submissionData.append('last_name', formData.last_name);
+    submissionData.append('email', formData.email);
+    submissionData.append('cover_letter', formData.cover_letter);
+    submissionData.append('status', formData.status);
+
+    // Append file field only if a new file is selected
+    if (formData.resume && formData.resume instanceof File) {
+      submissionData.append('resume', formData.resume);
     }
 
-    onSubmit(submissionData); // Pass FormData to handle file uploads
+    onSubmit(submissionData);
   };
 
   return (
@@ -83,13 +111,22 @@ const CandidateForm = ({ initialValues = {}, onSubmit, onClose, jobPostings }) =
       />
 
       {/* Resume File Upload */}
-      <Button variant="contained" component="label" startIcon={<Upload />} sx={{ mb: 2 }}>
-        Upload Resume
-        <input type="file" hidden onChange={handleFileChange} />
-      </Button>
-      {formData.resume && (
-        <Typography variant="body2">Selected file: {formData.resume.name}</Typography>
-      )}
+      <Box sx={{ mb: 2 }}>
+        <Button variant="contained" component="label" startIcon={<Upload />}>
+          Upload Resume
+          <input type="file" hidden onChange={handleFileChange} />
+        </Button>
+        {formData.resume && formData.resume instanceof File && (
+          <Typography variant="body2">Selected file: {formData.resume.name}</Typography>
+        )}
+        {initialValues?.resume && !(formData.resume instanceof File) && (
+          <Box sx={{ mt: 1 }}>
+            <Link href={initialValues.resume} target="_blank" rel="noopener" variant="body2">
+              View Existing Resume
+            </Link>
+          </Box>
+        )}
+      </Box>
 
       {/* Cover Letter */}
       <TextField
@@ -110,10 +147,7 @@ const CandidateForm = ({ initialValues = {}, onSubmit, onClose, jobPostings }) =
           onChange={(e) => handleChange('status', e.target.value)}
           label="Status"
         >
-          <MenuItem value="Applied">Applied</MenuItem>
-          <MenuItem value="Reviewed">Reviewed</MenuItem>
-          <MenuItem value="Interview Scheduled">Interview Scheduled</MenuItem>
-          <MenuItem value="Offered">Offered</MenuItem>
+          <MenuItem value="Active">Active</MenuItem>
           <MenuItem value="Rejected">Rejected</MenuItem>
         </Select>
       </FormControl>
