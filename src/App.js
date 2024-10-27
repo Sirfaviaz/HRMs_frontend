@@ -1,4 +1,5 @@
-import React from 'react';
+// src/App.js
+import React, { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux'; // Import Redux Provider
 import store from './store'; // Import your Redux store
@@ -10,7 +11,15 @@ import MultiStepForm from './pages/MultiStepForm';
 import PrivateRoute from './components/PrivateRoute';
 import JobListingPage from './components/RightContent/Recruitment/Joblisting/JobListingPage'; // Import the JobListingPage
 
+// Import the notification permission request function
+import { requestNotificationPermission } from './requestNotificationPermission';
+
 function App() {
+  useEffect(() => {
+    // Request notification permission when the app loads
+    requestNotificationPermission();
+  }, []);
+
   return (
     <Provider store={store}>
       <Router>

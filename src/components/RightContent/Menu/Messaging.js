@@ -13,6 +13,8 @@ const ChatApp = () => {
     const [currentUser, setCurrentUser] = useState(null);
     const chatSocketRef = useRef(null);
     const messageQueue = [];
+    const [unreadCounts, setUnreadCounts] = useState({});
+
 
     useEffect(() => {
         fetchCurrentUser();
@@ -21,7 +23,7 @@ const ChatApp = () => {
 
         // Start polling for chat updates every 5 seconds
         const pollingInterval = setInterval(() => {
-            fetchChatRooms(true);
+            fetchChatRooms();
         }, 5000);
 
         // Clean up polling when component unmounts
@@ -38,44 +40,24 @@ const ChatApp = () => {
         }
     };
 
-    const fetchChatRooms = async (isPolling = false) => {
+    const fetchChatRooms = async () => {
         try {
             const response = await api.get('/chat/chat-rooms/');
             console.log('Chat rooms:', response.data);
-
+    
             // Sort chat rooms based on the timestamp of the last message
             const sortedChatRooms = response.data.sort((a, b) => {
-                return new Date(b.last_message_timestamp) - new Date(a.last_message_timestamp);
+                const timeA = new Date(a.last_message_timestamp || 0);
+                const timeB = new Date(b.last_message_timestamp || 0);
+                return timeB - timeA;
             });
-
-            if (isPolling) {
-                // Check if there are any changes in the chat rooms list and update
-                setChatRooms((prevChatRooms) => {
-                    // Compare if there's any difference in last_message between old and new data
-                    let hasChanges = false;
-                    if (prevChatRooms.length !== sortedChatRooms.length) {
-                        hasChanges = true;
-                    } else {
-                        for (let i = 0; i < prevChatRooms.length; i++) {
-                            if (prevChatRooms[i].last_message !== sortedChatRooms[i].last_message) {
-                                hasChanges = true;
-                                break;
-                            }
-                        }
-                    }
-                    if (hasChanges) {
-                        return sortedChatRooms;
-                    } else {
-                        return prevChatRooms;
-                    }
-                });
-            } else {
-                setChatRooms(sortedChatRooms);
-            }
+    
+            setChatRooms(sortedChatRooms);
         } catch (error) {
             console.error('Error fetching chat rooms:', error);
         }
     };
+    
 
     const fetchContacts = async () => {
         try {
@@ -92,6 +74,13 @@ const ChatApp = () => {
         setMessages([]);
         setupWebSocket(chat.id);
         fetchMessages(chat.id);
+    
+        // Reset unread count for this chat
+        setUnreadCounts((prevUnreadCounts) => {
+            const newUnreadCounts = { ...prevUnreadCounts };
+            newUnreadCounts[chat.id] = 0;
+            return newUnreadCounts;
+        });
     };
 
     const fetchMessages = async (chatRoomId) => {
@@ -101,7 +90,11 @@ const ChatApp = () => {
             const processedMessages = response.data.map((message) => ({
                 id: message.id,
                 text: message.content,
-                sender: `${message.sender?.first_name} ${message.sender?.last_name}`.trim() || message.sender?.username || 'Unknown',
+                senderId: message.sender?.id,
+                senderName:
+                    message.sender?.first_name || message.sender?.last_name
+                        ? `${message.sender.first_name} ${message.sender.last_name}`.trim()
+                        : message.sender?.username || 'Unknown',
                 timestamp: new Date(message.timestamp).toLocaleTimeString(),
             }));
             console.log('Processed messages:', processedMessages);
@@ -133,38 +126,53 @@ const ChatApp = () => {
         chatSocketRef.current.onmessage = (e) => {
             console.log('WebSocket message received:', e.data);
             const data = JSON.parse(e.data);
-            const senderUsername = data.sender?.username || data.sender || 'Unknown';
-
+            const senderId = data.sender_id;
+            const senderName = data.sender_name;
+        
             // Append message to chat
             setMessages((prevMessages) => [
                 ...prevMessages,
                 {
-                    id: data.id || prevMessages.length + 1,
-                    text: data.content || data.message,
-                    sender: senderUsername,
-                    timestamp: new Date(data.timestamp || Date.now()).toLocaleTimeString(),
+                    id: data.id,
+                    text: data.message,
+                    senderId: senderId,
+                    senderName: senderName,
+                    timestamp: new Date(data.timestamp).toLocaleTimeString(),
                 },
             ]);
-
+        
             // Update the last message in the chat room and reorder
             setChatRooms((prevChatRooms) => {
                 const updatedChatRooms = prevChatRooms.map((chatRoom) => {
                     if (chatRoom.id === data.chat_room_id) {
                         return {
                             ...chatRoom,
-                            last_message: data.content || data.message,
-                            last_message_timestamp: data.timestamp || new Date().toISOString(),
+                            last_message: data.message,
+                            last_message_timestamp: data.timestamp,
                         };
                     }
                     return chatRoom;
                 });
-
-                // Sort chat rooms based on last message timestamp
+        
+                // Always sort chat rooms based on last message timestamp
                 return updatedChatRooms.sort((a, b) => {
-                    return new Date(b.last_message_timestamp) - new Date(a.last_message_timestamp);
+                    const timeA = new Date(a.last_message_timestamp || 0);
+                    const timeB = new Date(b.last_message_timestamp || 0);
+                    return timeB - timeA;
                 });
             });
+            // Update unread counts if the message is in another chat room
+            if (data.chat_room_id !== activeChat?.id) {
+                setUnreadCounts((prevUnreadCounts) => {
+                    const newUnreadCounts = { ...prevUnreadCounts };
+                    newUnreadCounts[data.chat_room_id] = (newUnreadCounts[data.chat_room_id] || 0) + 1;
+                    return newUnreadCounts;
+                });
+            }
+
+
         };
+        
 
         chatSocketRef.current.onerror = (error) => {
             console.error('WebSocket error:', error);
@@ -200,7 +208,8 @@ const ChatApp = () => {
         if (chatSocketRef.current && currentUser) {
             const message = {
                 message: text,
-                sender: currentUser.username,
+                sender_id: currentUser.id,      // Include sender_id
+                sender_name: currentUser.username, // Include sender_name
             };
             console.log('Attempting to send message:', message);
 
@@ -232,6 +241,7 @@ const ChatApp = () => {
                 activeChat={activeChat}
                 messages={messages}
                 onSendMessage={handleSendMessage}
+                currentUser={currentUser}
             />
         </div>
     );

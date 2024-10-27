@@ -21,7 +21,7 @@ const MessageInput = ({ onSendMessage }) => {
                 type="text"
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
-                onKeyPress={handleKeyPress} // Add this line to handle the "Enter" key press
+                onKeyPress={handleKeyPress}
                 placeholder="Type a message..."
                 className="flex-grow p-3 bg-charcoal text-neon-blue rounded mr-2 border border-metallic-silver"
             />
@@ -36,4 +36,3 @@ const MessageInput = ({ onSendMessage }) => {
 };
 
 export default MessageInput;
-

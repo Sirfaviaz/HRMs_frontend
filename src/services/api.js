@@ -63,6 +63,8 @@
 // );
 
 // export default api;
+
+//src/services/api.js
 import axios from 'axios';
 import Cookies from 'js-cookie';
 

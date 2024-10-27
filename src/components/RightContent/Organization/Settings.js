@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Settings.css';
 import Sidebar from './Settings/Sidebar';
-import ImportExport from './Settings/Content';
+import ImportExport from './Settings/ImportExport';
 import UserPermissions from './Settings/UserPermissions';
 
 const Settings = () => {

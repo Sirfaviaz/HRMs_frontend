@@ -1,6 +1,6 @@
 import React from 'react';
 import { Box } from '@mui/material';
-import AdminDashboard from './Menu/AdminDashboard';
+import Dashboard from './Menu/DashboardPage';
 import Mails from './Menu/Messaging';
 import Meetings from './Menu/Meetings';
 import JobPostings from './Recruitment/JobPostings';
@@ -19,7 +19,7 @@ const RightContent = ({ selectedOption }) => {
   let content;
   switch (selectedOption) {
     case 'dashboard':
-      content = <AdminDashboard />;
+      content = <Dashboard />;
       break;
     case 'mails':
       content = <Mails />;
@@ -62,7 +62,7 @@ const RightContent = ({ selectedOption }) => {
       content = <Settings />;
       break;
     default:
-      content = <AdminDashboard />; // Default to Dashboard
+      content = <Dashboard />; // Default to Dashboard
   }
 
   return (
