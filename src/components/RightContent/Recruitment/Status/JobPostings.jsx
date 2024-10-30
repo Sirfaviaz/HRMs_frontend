@@ -37,7 +37,6 @@ const JobPosting = () => {
   // Fetch all JobPostings on component mount
   useEffect(() => {
     fetchJobPostings();
-    fetchStages();
     fetchEmployees();
   }, []);
 
@@ -53,20 +52,19 @@ const JobPosting = () => {
   const fetchCandidates = async (jobPostingId) => {
     try {
       const response = await api.get(`/jobs/job-postings/${jobPostingId}/applications/`);
-      console.log(response.data)
       setCandidates(response.data);
-      console.log("candidate", response.data);
     } catch (error) {
       console.error('Error fetching candidates:', error);
     }
   };
 
-  const fetchStages = async () => {
+  const fetchStages = async (jobPostingId) => {
     try {
-      const response = await api.get('/jobs/stages/');
-      setStages(response.data);
+      const response = await api.get(`/jobs/stages/?job_posting=${jobPostingId}`);
+      return response.data;  // Return stages for further filtering
     } catch (error) {
       console.error('Error fetching stages:', error);
+      return [];  // Return an empty array in case of error
     }
   };
 
@@ -94,6 +92,12 @@ const JobPosting = () => {
   const handleAssignStageDialogOpen = (candidate) => {
     setSelectedCandidate(candidate);
     setStageFormData({ stage: '', assigned_employee: '', result: '' });
+    fetchStages(selectedJobPosting.id).then((allStages) => {
+      // Filter out stages that have already been assigned to the candidate
+      const assignedStageIds = candidate.stages.map(stage => stage.stage.id);
+      const availableStages = allStages.filter(stage => !assignedStageIds.includes(stage.id));
+      setStages(availableStages);  // Set only available stages
+    });
     setShowStageDialog(true);
   };
 
@@ -142,9 +146,9 @@ const JobPosting = () => {
     e.preventDefault();
     try {
       const stageData = {
-      stage_id: stageFormData.stage,  // Use 'stage_id' to send the stage ID
-      assigned_employee_id: stageFormData.assigned_employee,  // Use 'assigned_employee_id' to send the employee ID
-      result: stageFormData.result,
+        stage_id: stageFormData.stage,
+        assigned_employee_id: stageFormData.assigned_employee,
+        result: stageFormData.result,
       };
       await api.put(`/jobs/candidate-stages/${selectedStage.id}/`, stageData);
       fetchCandidates(selectedJobPosting.id);
@@ -231,7 +235,7 @@ const JobPosting = () => {
                           candidate.stages.map((stage) => (
                             <Chip
                               key={stage.id}
-                              label={`${stage.stage.name + stage.assigned_employee}`}
+                              label={`${stage.stage.name} - ${stage.assigned_employee}`}
                               color="primary"
                               style={{ marginRight: '5px', cursor: 'pointer' }}
                               onClick={() => handleEditStageDialogOpen(stage)}
